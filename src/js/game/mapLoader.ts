@@ -26,6 +26,7 @@ export class MapLoader {
             y: number,
             z: number
         },
+        t: number,
         a: boolean,
         co: boolean
     }[]
@@ -35,7 +36,7 @@ export class MapLoader {
         this.mapData = JSON.parse(mapDataString);
     }
 
-    loadMapIntoScene() {
+    async loadMapIntoScene() {
         for (const part of this.mapData) {
             console.log("Load part")
             const euler = new THREE.Euler(
@@ -55,10 +56,13 @@ export class MapLoader {
                 euler,
                 new THREE.Vector3(part.s.x, part.s.y, part.s.z),
                 new THREE.Color(part.c.r / 255, part.c.g / 255, part.c.b / 255),
-                d
+                d,
+                true,
+                part.t
             );
 
             this.engine.addBox(box);
+            //await new Promise(r => setTimeout(r, 1));
         }
     }
 }

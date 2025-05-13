@@ -25,11 +25,10 @@ export class Player {
         this.theta = 0;
 
         this.body = new CANNON.Body({
-            mass: .5,
+            mass: 5,
             position: new CANNON.Vec3(0, 0, 0),
             shape: new CANNON.Sphere(2)
         });
-        this.body.material.restitution = 0;
         physicsEngine.world.addBody(this.body);
 
     }

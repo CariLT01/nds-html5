@@ -10,6 +10,7 @@ export class PhysicsEngine {
     worker: Worker;
     updates: any = {};
     received: boolean = true;
+    lastTime = performance.now();
     constructor() {
 
         this.worker = new Worker(new URL('./physics.worker.ts', import.meta.url), { type: 'module' });
@@ -83,8 +84,13 @@ export class PhysicsEngine {
         if (this.received == false) {
             return;
         }
+
+        const now = performance.now();
+        // elapsed real time in seconds
+        const deltaSec = (now - this.lastTime) / 1000;
+        this.lastTime = now;
         this.received = false;
         console.log("Stepping physics");
-        this.worker.postMessage({ type: "step", timeStep });
+        this.worker.postMessage({ type: "step", deltaSec });
     }
 }

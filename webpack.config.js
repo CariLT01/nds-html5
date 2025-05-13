@@ -38,11 +38,15 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './src/html/index.html',  // Path to your HTML template
-            scriptLoading: 'module' // <-- This is the key
         }),
     ],
     experiments: {
         // Enables native Web Worker support
         topLevelAwait: true
+    },
+    optimization: {
+        splitChunks: {
+            chunks: 'all', // Split both dynamic and static imports
+        },
     }
 };

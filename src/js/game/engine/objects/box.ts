@@ -6,8 +6,8 @@ import studsTopTexture from '../../../../../assets/textures/studs/top.png';
 import studsBottomTexture from '../../../../../assets/textures/studs/bottom.png';
 
 
-const tileSizeU = 0.25;  // 0.5 world‑units → 1 repeat in U
-const tileSizeV = 1; // 0.25 world‑units → 1 repeat in V
+const tileSizeU = 0.25 * 4;  // 0.5 world‑units → 1 repeat in U
+const tileSizeV = 1 * 4; // 0.25 world‑units → 1 repeat in V
 
 function loadRepeat(url: string, faceWidth: number, faceHeight: number) {
     const t = new TextureLoader().load(url);
@@ -27,7 +27,7 @@ export class BoxInstance {
     world: PhysicsEngine;
     disposed: boolean = false;
     size: Vector3;
-    constructor(scene: Scene, physicsEngine: PhysicsEngine, position: Vector3, rotation: Euler, size: Vector3, color: Color, density: number = 1, useStudsTexture: boolean = true) {
+    constructor(scene: Scene, physicsEngine: PhysicsEngine, position: Vector3, rotation: Euler, size: Vector3, color: Color, density: number = 1, useStudsTexture: boolean = true, transparency: number = 0) {
         this.size = size.clone();
 
         this.scene = scene;
@@ -52,12 +52,17 @@ export class BoxInstance {
             //makeTexRepeater(texRightUrl, d / tileSize, h / tileSize), // right
             null, // right
         ];
-
-        const materials = textures.map(tex => new MeshPhongMaterial({ map: tex, color: color }));
+        let isTransparent = false;
+        if (transparency > 0) {
+            isTransparent = true;
+        }
+        const materials = textures.map(tex => new MeshPhongMaterial({ map: tex, color: color, transparent: isTransparent, opacity: 1 - transparency}));
 
 
 
         this.threeObject = new Mesh(geometry, materials);
+        this.threeObject.castShadow = true;
+        this.threeObject.receiveShadow = true;
         // Set transformation
         this.threeObject.position.copy(position);
         this.threeObject.rotation.copy(rotation);
