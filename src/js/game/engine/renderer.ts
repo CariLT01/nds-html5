@@ -6,6 +6,7 @@ import SkyLeft from '../../../../assets/textures/sky/left.png';
 import SkyRight from '../../../../assets/textures/sky/right.png';
 import SkyFront from '../../../../assets/textures/sky/front.png';
 
+
 const loadAndFlip = (url: string, flipX = false, flipY = false): Promise<Texture> => {
     return new Promise((resolve) => {
         new TextureLoader().load(url, (texture) => {
@@ -25,6 +26,9 @@ export class RendererWindow {
     camera: PerspectiveCamera;
     renderer: WebGLRenderer;
     constructor() {
+
+
+
         const canvas: HTMLCanvasElement = document.createElement('canvas');
         document.body.appendChild(canvas);
 

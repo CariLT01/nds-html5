@@ -21,14 +21,21 @@ function loadRepeat(url: string, faceWidth: number, faceHeight: number) {
 }
 
 export class BoxInstance {
-    threeObject: Mesh;
     cannonBody: Body;
     scene: Scene;
     world: PhysicsEngine;
     disposed: boolean = false;
     size: Vector3;
+    rotation: Euler;
+    position: Vector3;
+    color: Color;
+    transparency: number;
     constructor(scene: Scene, physicsEngine: PhysicsEngine, position: Vector3, rotation: Euler, size: Vector3, color: Color, density: number = 1, useStudsTexture: boolean = true, transparency: number = 0) {
         this.size = size.clone();
+
+        this.color = color.clone();
+
+        this.transparency = transparency;
 
         this.scene = scene;
         this.world = physicsEngine;
@@ -38,6 +45,9 @@ export class BoxInstance {
         const w: number = size.x;
         const h: number = size.y;
         const d: number = size.z;
+
+        this.rotation = rotation;
+        this.position = position;
 
         const textures: (null | Texture)[] = [
             //makeTexRepeater(texFrontUrl, w / tileSize, h / tileSize), // front
@@ -60,12 +70,12 @@ export class BoxInstance {
 
 
 
-        this.threeObject = new Mesh(geometry, materials);
-        this.threeObject.castShadow = true;
-        this.threeObject.receiveShadow = true;
+        //this.threeObject = new Mesh(geometry, materials);
+        //this.threeObject.castShadow = true;
+        //this.threeObject.receiveShadow = true;
         // Set transformation
-        this.threeObject.position.copy(position);
-        this.threeObject.rotation.copy(rotation);
+        //this.threeObject.position.copy(position);
+        //this.threeObject.rotation.copy(rotation);
 
         // Compute body mass from volume
         const v = size.x * size.y * size.z;
@@ -88,7 +98,7 @@ export class BoxInstance {
         //world.addBody(this.cannonBody);
         this.world.addBody(this);
         this.world.world.addBody(this.cannonBody);
-        scene.add(this.threeObject);
+        //scene.add(this.threeObject);
     }
     update() {
         if (this.disposed == true) {
@@ -98,13 +108,15 @@ export class BoxInstance {
         const pos = this.cannonBody.position;
         const q = this.cannonBody.quaternion;
         //console.log("Box now at: ", pos.x, pos.y, pos.z);
-        this.threeObject.position.set(pos.x, pos.y, pos.z);
-        this.threeObject.quaternion.set(q.x, q.y, q.z, q.w);
+        //this.threeObject.position.set(pos.x, pos.y, pos.z);
+        //this.threeObject.quaternion.set(q.x, q.y, q.z, q.w);
+
+
 
 
     }
     dispose() {
-        this.scene.remove(this.threeObject);
+        //this.scene.remove(this.threeObject);
         //this.world.remove(this.cannonBody);
 
         this.disposed = true;

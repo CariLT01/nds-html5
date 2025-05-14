@@ -37,6 +37,7 @@ export class MapLoader {
     }
 
     async loadMapIntoScene() {
+        const boxesToAdd: BoxInstance[] = [];
         for (const part of this.mapData) {
             console.log("Load part")
             const euler = new THREE.Euler(
@@ -60,9 +61,11 @@ export class MapLoader {
                 true,
                 part.t
             );
+            boxesToAdd.push(box);
 
-            this.engine.addBox(box);
-            await new Promise(r => setTimeout(r, 1));
+            //this.engine.addBox(box);
+            //await new Promise(r => setTimeout(r, 1));
         }
+        this.engine.batchAddBoxes(boxesToAdd);
     }
 }

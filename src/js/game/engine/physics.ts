@@ -1,5 +1,7 @@
 import { World, Body, Vec3, SAPBroadphase } from 'cannon';
 import { BoxInstance } from './objects/box';
+import { Engine } from './engine';
+import { Euler, Quaternion } from 'three';
 
 
 
@@ -11,8 +13,9 @@ export class PhysicsEngine {
     updates: any = {};
     received: boolean = true;
     lastTime = performance.now();
-    constructor() {
+    constructor(engine: Engine) {
 
+        
         this.worker = new Worker(new URL('./physics.worker.ts', import.meta.url), { type: 'module' });
         this.worker.onmessage = (event) => {
             if (event.data.type === "update") {
@@ -27,10 +30,14 @@ export class PhysicsEngine {
                         body.cannonBody.mass = 0;
                         body.cannonBody.position.set(update.position.x, update.position.y, update.position.z);
                         body.cannonBody.quaternion.set(update.quaternion.x, update.quaternion.y, update.quaternion.z, update.quaternion.w);
-                        body.threeObject.position.set(update.position.x, update.position.y, update.position.z);
-                        body.threeObject.quaternion.set(update.quaternion.x, update.quaternion.y, update.quaternion.z, update.quaternion.w);
+                        //body.threeObject.position.set(update.position.x, update.position.y, update.position.z);
+                        //body.threeObject.quaternion.set(update.quaternion.x, update.quaternion.y, update.quaternion.z, update.quaternion.w);
+                        body.position.set(update.position.x, update.position.y, update.position.z);
+                        body.rotation.copy(new Euler().setFromQuaternion(new Quaternion(update.quaternion.x, update.quaternion.y, update.quaternion.z, update.quaternion.w)));
                     }
+
                 }
+                engine.updateGeometryClusters();
             }
         };
 
