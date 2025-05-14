@@ -16,6 +16,8 @@ export class Player {
     phi: number;
     theta: number;
     body: CANNON.Body;
+    currentX: number = 0;
+    currentY: number = 0;
 
     constructor(camera: THREE.PerspectiveCamera, physicsEngine: PhysicsEngine) {
         this.camera = camera;

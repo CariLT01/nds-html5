@@ -1,4 +1,4 @@
-import { Mesh, Scene, Vector3, Euler, Color, Quaternion, BoxGeometry, MeshPhongMaterial, TextureLoader, RepeatWrapping, Texture } from 'three'
+import { Mesh, Scene, Vector3, Euler, Color, Quaternion, BoxGeometry, TextureLoader, RepeatWrapping, Texture, MeshPhysicalMaterial } from 'three'
 import { Body, Vec3, World, Box } from 'cannon'
 import { PhysicsEngine } from '../physics';
 
@@ -56,7 +56,7 @@ export class BoxInstance {
         if (transparency > 0) {
             isTransparent = true;
         }
-        const materials = textures.map(tex => new MeshPhongMaterial({ map: tex, color: color, transparent: isTransparent, opacity: 1 - transparency}));
+        const materials = textures.map(tex => new MeshPhysicalMaterial({ map: tex, color: color, transparent: isTransparent, opacity: 1 - transparency}));
 
 
 

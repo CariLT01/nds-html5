@@ -74,8 +74,8 @@ export class InputController {
             this.previous = { ...this.current };
         }
 
-        this.current.mouseXDelta = this.current.mouseX - this.previous.mouseX;
-        this.current.mouseYDelta = this.current.mouseY - this.previous.mouseY;
+        this.current.mouseXDelta = e.movementX;
+        this.current.mouseYDelta = e.movementY;
     }
     onKeyDown(e: KeyboardEvent) {
         this.keys[e.key.toLowerCase()] = true;

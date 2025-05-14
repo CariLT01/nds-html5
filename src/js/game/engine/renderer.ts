@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh, DirectionalLight, PCFSoftShadowMap, AmbientLight, CubeTextureLoader, TextureLoader, Texture, Vector2, CubeTexture, CubeReflectionMapping} from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh, FogExp2, DirectionalLight, PCFSoftShadowMap, AmbientLight, CubeTextureLoader, TextureLoader, Texture, Vector2, CubeTexture, CubeReflectionMapping} from 'three'
 import SkyBack from '../../../../assets/textures/sky/back.png';
 import SkyDown from '../../../../assets/textures/sky/down.png';
 import SkyUp from '../../../../assets/textures/sky/up.png';
@@ -28,13 +28,18 @@ export class RendererWindow {
         const canvas: HTMLCanvasElement = document.createElement('canvas');
         document.body.appendChild(canvas);
 
+        // Mouse lock
+        canvas.addEventListener('click', () => {
+            canvas.requestPointerLock();
+        });
+
         this.scene = new Scene();
         this.camera = new PerspectiveCamera();
 
 
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
-        this.renderer = new WebGLRenderer({ canvas });
+        this.renderer = new WebGLRenderer({ canvas, antialias: true });
         this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 
         this.renderer.shadowMap.enabled = true;
@@ -44,11 +49,6 @@ export class RendererWindow {
         const sunlight = new DirectionalLight(0xffffff, 3);
         sunlight.position.set(100, 200, 100); // same as sunMesh
 
-        sunlight.castShadow = true;
-        sunlight.shadow.mapSize.width = 1024;
-        sunlight.shadow.mapSize.height = 1024;
-        sunlight.shadow.camera.near = 0.5;
-        sunlight.shadow.camera.far = 500;
         this.scene.add(sunlight);
         // Ambient
         const ambientLight = new AmbientLight(0x404040, 2); // soft white light
@@ -57,6 +57,9 @@ export class RendererWindow {
         // Skybox
 
         this.asyncInit();
+
+        // Fog
+        this.scene.fog = new FogExp2(0xB0C4DE, 0.005);  // Light steel blue with mild density
 
 
     }

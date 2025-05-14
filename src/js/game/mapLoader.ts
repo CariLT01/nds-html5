@@ -62,7 +62,7 @@ export class MapLoader {
             );
 
             this.engine.addBox(box);
-            //await new Promise(r => setTimeout(r, 1));
+            await new Promise(r => setTimeout(r, 1));
         }
     }
 }
