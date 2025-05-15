@@ -32,7 +32,7 @@ self.addEventListener("message", (event: MessageEvent) => {
     const data = event.data;
     if (data.type === "step") {
         const timeStep: number = data.timeStep;
-        world.step(1 / 60, timeStep);
+        world.step(1/60, timeStep);
 
         // For each body in the world, prepare update data.
         const updates = world.bodies.map((body: Body) => {

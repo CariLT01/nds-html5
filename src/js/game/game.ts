@@ -1,6 +1,6 @@
 import { Engine } from './engine/engine';
 import { MapLoader } from './mapLoader';
-import { MAP_DATA } from './data/map';
+import { MAP_DATA } from './engine/data/map';
 
 export class Game {
     engine: Engine;

@@ -30,6 +30,7 @@ export class BoxInstance {
     position: Vector3;
     color: Color;
     transparency: number;
+    uuid: number;
     constructor(scene: Scene, physicsEngine: PhysicsEngine, position: Vector3, rotation: Euler, size: Vector3, color: Color, density: number = 1, useStudsTexture: boolean = true, transparency: number = 0) {
         this.size = size.clone();
 
@@ -39,6 +40,7 @@ export class BoxInstance {
 
         this.scene = scene;
         this.world = physicsEngine;
+        this.uuid = Math.random() * 1000000;
 
         // Create the three object
         const geometry = new BoxGeometry(size.x, size.y, size.z);

@@ -1,10 +1,16 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh, FogExp2, DirectionalLight, PCFSoftShadowMap, AmbientLight, CubeTextureLoader, TextureLoader, Texture, Vector2, CubeTexture, CubeReflectionMapping} from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh, FogExp2, DirectionalLight, PCFSoftShadowMap, AmbientLight, CubeTextureLoader, TextureLoader, Texture, Vector2, CubeTexture, CubeReflectionMapping } from 'three'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+
 import SkyBack from '../../../../assets/textures/sky/back.png';
 import SkyDown from '../../../../assets/textures/sky/down.png';
 import SkyUp from '../../../../assets/textures/sky/up.png';
 import SkyLeft from '../../../../assets/textures/sky/left.png';
 import SkyRight from '../../../../assets/textures/sky/right.png';
 import SkyFront from '../../../../assets/textures/sky/front.png';
+import { CloudsPlane } from '../vfx/clouds';
 
 
 const loadAndFlip = (url: string, flipX = false, flipY = false): Promise<Texture> => {
@@ -25,6 +31,8 @@ export class RendererWindow {
     scene: Scene;
     camera: PerspectiveCamera;
     renderer: WebGLRenderer;
+    composer: EffectComposer;
+    clouds: CloudsPlane;
     constructor() {
 
 
@@ -38,7 +46,7 @@ export class RendererWindow {
         });
 
         this.scene = new Scene();
-        this.camera = new PerspectiveCamera();
+        this.camera = new PerspectiveCamera(70, 1, 0.01, 100_000);
 
 
         this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -48,6 +56,21 @@ export class RendererWindow {
 
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = PCFSoftShadowMap;  // Optional for softer shadows
+
+        // Post-processing
+        this.composer = new EffectComposer(this.renderer);
+        this.composer.addPass(new RenderPass(this.scene, this.camera));
+
+        // SSAO
+        //const ssaoPass = new SSAOPass(this.scene, this.camera);
+        //ssaoPass.kernelRadius = 16;       // Larger radius covers more area
+        //ssaoPass.minDistance = 0.001;     // Lower min = detect tight spaces (like corners)
+        //ssaoPass.maxDistance = 0.1;       // Lower max = limit AO spread, sharper shadows
+        //ssaoPass.renderToScreen = true;
+        //this.composer.addPass(ssaoPass);
+
+        const outputPass = new OutputPass();
+        this.composer.addPass(outputPass);
 
         // Add sun, it is too dark
         const sunlight = new DirectionalLight(0xffffff, 3);
@@ -65,6 +88,8 @@ export class RendererWindow {
         // Fog
         this.scene.fog = new FogExp2(0xB0C4DE, 0.005);  // Light steel blue with mild density
 
+        // Clouds
+        this.clouds = new CloudsPlane(this);
 
     }
 
@@ -93,7 +118,9 @@ export class RendererWindow {
     }
 
     render() {
-        this.renderer.render(this.scene, this.camera);
+        //this.renderer.render(this.scene, this.camera);
+        this.clouds.update(1 / 60);
+        this.composer.render();
     }
     resizeEvent() {
         window.addEventListener('resize', () => {

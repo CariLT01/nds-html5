@@ -18,6 +18,7 @@ export class Player {
     body: CANNON.Body;
     currentX: number = 0;
     currentY: number = 0;
+    physicsEngine: PhysicsEngine;
 
     constructor(camera: THREE.PerspectiveCamera, physicsEngine: PhysicsEngine) {
         this.camera = camera;
@@ -25,13 +26,14 @@ export class Player {
         this.rotation = new THREE.Quaternion();
         this.phi = 0;
         this.theta = 0;
+        this.physicsEngine = physicsEngine;
 
         this.body = new CANNON.Body({
             mass: 5,
             position: new CANNON.Vec3(0, 0, 0),
             shape: new CANNON.Sphere(2)
         });
-        physicsEngine.world.addBody(this.body);
+        physicsEngine.playerPhysicsAddBody(null, true);
 
     }
 
@@ -88,8 +90,11 @@ export class Player {
             j = 2;
         }
         const nv = new CANNON.Vec3(forwardVec.x + strafeVec.x, forwardVec.y + strafeVec.y + j, forwardVec.z + strafeVec.z);
-        const a = new CANNON.Vec3(this.body.velocity.x + nv.x, this.body.velocity.y + nv.y, this.body.velocity.z + nv.z);
-        this.body.velocity.copy(a);
+        if (nv.distanceTo(new CANNON.Vec3(0, 0, 0)) > 0) {
+            this.physicsEngine.playerAddVelocity(nv);
+        }
+        //const a = new CANNON.Vec3(this.body.velocity.x + nv.x, this.body.velocity.y + nv.y, this.body.velocity.z + nv.z);
+        //this.body.velocity.copy(a);
     }
 
     update(timeElapsed: number) {

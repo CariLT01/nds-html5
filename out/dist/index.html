@@ -1,9 +1,39 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game</title><style>canvas {position: fixed;
-        width: 100vw;
-    height: 100vh;}
-    body {
-        margin: 0;
-        padding: 0;
-        height: 100vh;
-        width: 100vw;
-    }</style><script defer="defer" src="206.e7c9adb86d964636054c.js"></script><script defer="defer" src="603.c2461e0940cb6e0d5034.js"></script><script defer="defer" src="main.0d235127e09179ceaabb.js"></script><script defer="defer" src="worker.0f8153eddce26167cba0.js"></script></head><body></body></html>
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game</title><style>@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+        canvas {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+        }
+        .stats {
+            z-index: 2147483647;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .stats * {
+            font-family: "JetBrains Mono", monospace;
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .stats ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .stats li {
+            margin-left: 0;
+        }
+        .stats h4 {
+            text-decoration: underline;
+        }</style><script defer="defer" src="206.e7c9adb86d964636054c.js"></script><script defer="defer" src="521.4caab530654e0a3bba3d.js"></script><script defer="defer" src="main.ea5740117a77dfacc82c.js"></script><script defer="defer" src="worker.0f8153eddce26167cba0.js"></script></head><body><div class="stats"><h4>Performance stats</h4><ul id="stats-list"><li id="render-fps">[Main thread]<strong>Render:</strong> 60.0 (10ms)</li><li id="priority-physics-fps">[Worker thread]<strong>Priority physics:</strong> 45.0 (20ms)</li><li id="world-physics-fps">[Worker thread]<strong>World physics:</strong> 15.0 (70ms)</li></ul></div></body></html>
