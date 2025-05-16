@@ -32,13 +32,13 @@ self.addEventListener("message", (event: MessageEvent) => {
         if (playerBodyIndex) {
             playerBodyIndex.angularVelocity.set(0, 0, 0)
         }
-        world.step(data.dt);
+        world.step(1/60, data.dt);
 
         // Dampen player velocity
         if (playerBodyIndex) {
 
-            const uprightQuat = new CANNON.Quaternion().setFromEuler(0, 0, 0);
-            playerBodyIndex.quaternion.copy(uprightQuat);
+
+            playerBodyIndex.quaternion.setFromEuler(0, 0, Math.PI / 2);
 
             //playerBodyIndex.velocity = playerBodyIndex.velocity.mult(0.95)
             //const a = new Euler(0, 0, 0)
@@ -52,7 +52,7 @@ self.addEventListener("message", (event: MessageEvent) => {
         if (playerBodyIndex == null) {
             throw new Error("No player!")
         }
-        console.log("Sent update position: ", playerBodyIndex.position);
+        //console.log("Sent update position: ", playerBodyIndex.position);
         self.postMessage({ type: "update", position: playerBodyIndex.position });
     } else if (data.type == "add") {
         console.log("Adding body");
@@ -81,7 +81,7 @@ self.addEventListener("message", (event: MessageEvent) => {
         const body = new CANNON.Body({
             mass: 5,
             position: new CANNON.Vec3(0, 0, 0),
-            shape: new CANNON.Cylinder(2, 2, 6, 8)
+            shape: new CANNON.Cylinder(2, 2, 2, 8)
         });
 
         world.addBody(body);

@@ -31,6 +31,7 @@ export class MapLoader {
         co: boolean
     }[]
     engine: Engine;
+    finishedLoading: boolean = false;
     constructor(engine: Engine, mapDataString: string) {
         this.engine = engine;
         this.mapData = JSON.parse(mapDataString);
@@ -67,5 +68,6 @@ export class MapLoader {
             //await new Promise(r => setTimeout(r, 1));
         }
         this.engine.batchAddBoxes(boxesToAdd);
+        this.finishedLoading = true;
     }
 }

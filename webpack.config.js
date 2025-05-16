@@ -26,7 +26,7 @@ module.exports = {
                 exclude: /node_modules/,
             },
             {
-                test: /\.(jpg|jpeg|png|gif|bmp|tiff)$/i, // Match image files
+                test: /\.(jpg|jpeg|png|gif|bmp|tiff|fbx)$/i, // Match image files
                 type: 'asset/resource',  // Use Webpack's built-in asset resource handling
             },
         ],

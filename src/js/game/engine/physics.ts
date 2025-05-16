@@ -37,8 +37,12 @@ export class PhysicsEngine {
                 // Save the latest updates from the simulation.
                 // Here we assume the order of body updates corresponds to your box order.
                 this.updates = event.data.updates;
-
+                
                 for (const update of this.updates) {
+                    if (update == null) {
+                        console.error(event.data);
+                        return;
+                    }
                     const body = this.bodies[update.id];
                     if (body) {
                         body.cannonBody.mass = 0;
@@ -48,6 +52,8 @@ export class PhysicsEngine {
                         //body.threeObject.quaternion.set(update.quaternion.x, update.quaternion.y, update.quaternion.z, update.quaternion.w);
                         body.position.set(update.position.x, update.position.y, update.position.z);
                         body.rotation.copy(new Euler().setFromQuaternion(new Quaternion(update.quaternion.x, update.quaternion.y, update.quaternion.z, update.quaternion.w)));
+                    } else {
+                        console.error("Body with UUID ", update.id, " not found!");
                     }
                     const q = new Quaternion().setFromEuler(body.rotation);
                     this.playerWorker.postMessage({
@@ -194,6 +200,12 @@ export class PhysicsEngine {
     }
     playerAddVelocity(v: CANNON.Vec3) {
         this.playerWorker.postMessage({ type: "add_velocity", velocity: { x: v.x, y: v.y, z: v.z } });
+    }
+    worldAddVelocity(body: BoxInstance, v: CANNON.Vec3) {
+        this.worker.postMessage({type: "add_velocity", velocity: {x: v.x, y: v.y, z: v.z}, uuid: body.uuid});
+    }
+    worldUnanchor(body: BoxInstance) {
+        this.worker.postMessage({type: "unanchor", uuid: body.uuid});
     }
     worldPhysicsStep() {
         if (this.received == false) {

@@ -1,15 +1,23 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh, FogExp2, DirectionalLight, PCFSoftShadowMap, AmbientLight, CubeTextureLoader, TextureLoader, Texture, Vector2, CubeTexture, CubeReflectionMapping } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh, FogExp2, DirectionalLight, PCFSoftShadowMap, AmbientLight, CubeTextureLoader, TextureLoader, Texture, Vector2, CubeTexture, CubeReflectionMapping, ClampToEdgeWrapping, LinearMipMapLinearFilter, LinearFilter } from 'three'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 
-import SkyBack from '../../../../assets/textures/sky/back.png';
+/*import SkyBack from '../../../../assets/textures/sky/back.png';
 import SkyDown from '../../../../assets/textures/sky/down.png';
 import SkyUp from '../../../../assets/textures/sky/up.png';
 import SkyLeft from '../../../../assets/textures/sky/left.png';
 import SkyRight from '../../../../assets/textures/sky/right.png';
-import SkyFront from '../../../../assets/textures/sky/front.png';
+import SkyFront from '../../../../assets/textures/sky/front.png';*/
+
+import SkyBack from '../../../../assets/textures/atmosphere_sky/back.png';
+import SkyDown from '../../../../assets/textures/atmosphere_sky/bottom.png';
+import SkyUp from '../../../../assets/textures/atmosphere_sky/top.png';
+import SkyLeft from '../../../../assets/textures/atmosphere_sky/left.png';
+import SkyRight from '../../../../assets/textures/atmosphere_sky/right.png';
+import SkyFront from '../../../../assets/textures/atmosphere_sky/front.png';
+
 import { CloudsPlane } from '../vfx/clouds';
 
 
@@ -21,6 +29,7 @@ const loadAndFlip = (url: string, flipX = false, flipY = false): Promise<Texture
                 texture.center = new Vector2(0.5, 0.5);
                 texture.rotation = Math.PI; // 180°
             }
+
             texture.needsUpdate = true;
             resolve(texture);
         });
@@ -75,7 +84,6 @@ export class RendererWindow {
         // Add sun, it is too dark
         const sunlight = new DirectionalLight(0xffffff, 3);
         sunlight.position.set(100, 200, 100); // same as sunMesh
-
         this.scene.add(sunlight);
         // Ambient
         const ambientLight = new AmbientLight(0x404040, 2); // soft white light
@@ -95,18 +103,28 @@ export class RendererWindow {
 
     async asyncInit() {
         const [px, nx, py, ny, pz, nz] = await Promise.all([
-            loadAndFlip(SkyLeft, false),       // +X (right)
-            loadAndFlip(SkyRight, false),        // -X (left)
-            loadAndFlip(SkyUp, true, true),                // +Y (top)
+            loadAndFlip(SkyLeft, false, true),       // +X (right)
+            loadAndFlip(SkyRight, false, true),        // -X (left)
+            loadAndFlip(SkyUp, false, false),                // +Y (top)
             loadAndFlip(SkyDown, false, false), // -Y (bottom)
-            loadAndFlip(SkyFront, false),       // +Z (front)
-            loadAndFlip(SkyBack, false)         // -Z (back)
+            loadAndFlip(SkyFront, false, true),       // +Z (front)
+            loadAndFlip(SkyBack, false, true)         // -Z (back)
         ]);
 
         const cubeTexture = new CubeTexture([
             px.image, nx.image, py.image,
             ny.image, pz.image, nz.image
         ]);
+
+        // ensure edge texels are used instead of border pixels
+        cubeTexture.wrapS = ClampToEdgeWrapping;
+        cubeTexture.wrapT = ClampToEdgeWrapping;
+
+        // full trilinear filtering
+        cubeTexture.minFilter = LinearMipMapLinearFilter;
+        cubeTexture.magFilter = LinearFilter;
+        cubeTexture.generateMipmaps = true;
+
         cubeTexture.mapping = CubeReflectionMapping;            // correct lookup type
         cubeTexture.needsUpdate = true;                         // upload to GPU
         this.scene.background = cubeTexture;
